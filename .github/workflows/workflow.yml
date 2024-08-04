@@ -32,7 +32,10 @@ jobs:
         run: |
           . venv/bin/activate
           nosetests -v --with-spec --spec-color --with-coverage --cover-package=app
+        shell: bash
+     
 
+    
 
 
 
