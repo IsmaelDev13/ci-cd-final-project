@@ -59,4 +59,51 @@ spec:
           python -m pip install --upgrade pip wheel
           pip install -r requirements.txt
           nosetests $(params.args)
-    
+---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: buildah-build
+spec:
+  params:
+    - name: image-name
+      type: string
+      description: Name of the image to build
+    - name: context-dir
+      type: string
+      description: Directory containing the Dockerfile and application code
+  workspaces:
+    - name: source
+  steps:
+    - name: build-image
+      image: quay.io/buildah/stable:latest
+      script: |
+        #!/bin/bash
+        set -e
+        echo "Building the image using buildah..."
+        buildah bud -t $(params.image-name) $(workspaces.source.path)/$(params.context-dir)
+
+
+---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: deploy-task
+spec:
+  params:
+    - name: image
+      type: string
+      description: The image to deploy
+    - name: app-name
+      type: string
+      description: The name of the application to deploy
+  workspaces:
+    - name: source
+  steps:
+    - name: deploy
+      image: openshift/oc:latest
+      script: |
+        #!/bin/bash
+        set -e
+        echo "Deploying the application..."
+        oc create deploy $(params.app-name) --image=$(params.image)
