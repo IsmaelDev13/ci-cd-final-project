@@ -60,33 +60,3 @@ spec:
           pip install -r requirements.txt
           nosetests $(params.args)
     
----
-apiVersion: tekton.dev/v1beta1
-kind: Task
-metadata:
-  name: buildah-task
-spec:
-  steps:
-    - name: build
-      image: quay.io/buildah/stable:latest
-      script: |
-        #!/bin/bash
-        set -e
-        ctr=$(buildah from python:3.9-slim)
-        mnt=$(buildah mount $ctr)
-        cp -r /workspace/source/* $mnt/app
-        buildah config --workingdir /app $ctr
-        buildah config --env PORT=8000 $ctr
-        buildah run $ctr pip install -r /app/requirements.txt
-        buildah config --port 8000 $ctr
-        buildah config --cmd '["gunicorn", "service:app", "--bind", "0.0.0.0:8000"]' $ctr
-        buildah commit $ctr $(params.image)
-      volumeMounts:
-        - name: source
-          mountPath: /workspace/source
-  params:
-    - name: image
-      type: string
-      description: 'The name of the image to build and push'
-  workspaces:
-    - name: source
