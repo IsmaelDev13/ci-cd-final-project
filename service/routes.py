@@ -39,8 +39,8 @@ def index():
 def list_counters():
     """Lists all counters"""
     app.logger.info("Request to list all counters...")
-    # noqa: E501 comment
-    counters = [dict(name=count[0], counter=count[1]) for count in COUNTER.items()]
+    items = COUNTER.items()
+    counters = [dict(name=count[0], counter=count[1]) for count in items]
 
     return jsonify(counters)
 
@@ -52,10 +52,9 @@ def list_counters():
 def create_counters(name):
     """Creates a new counter"""
     app.logger.info("Request to Create counter: %s...", name)
-
+    status_code = status.HTTP_409_CONFLICT
     if name in COUNTER:
-        # noqa: E501 comment
-        return abort(status.HTTP_409_CONFLICT, f"Counter {name} already exists")
+        return abort(status_code, f"Counter {name} already exists")
 
     COUNTER[name] = 0
 
