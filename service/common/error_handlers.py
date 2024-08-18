@@ -30,10 +30,12 @@ def bad_request(error):
     """Handles bad requests with 400_BAD_REQUEST"""
     message = str(error)
     app.logger.warning(message)
+    status_code = status.HTTP_400_BAD_REQUEST
+    errorMsg = "Bad Request"
     return (
         jsonify(
             # noqa: E501
-            status=status.HTTP_400_BAD_REQUEST, error="Bad Request", message=message
+            status=status_code, error=errorMsg, message=message
         ),
         status.HTTP_400_BAD_REQUEST,
     )
@@ -44,9 +46,11 @@ def not_found(error):
     """Handles resources not found with 404_NOT_FOUND"""
     message = str(error)
     app.logger.warning(message)
+    status_code = status.HTTP_404_NOT_FOUND
+    errorMsg = "Not Found"
     return (
         # noqa: E501
-        jsonify(status=status.HTTP_404_NOT_FOUND, error="Not Found", message=message),
+        jsonify(status=status_code, error=errorMsg, message=message),
         status.HTTP_404_NOT_FOUND,
     )
 

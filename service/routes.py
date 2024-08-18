@@ -77,7 +77,7 @@ def read_counters(name):
 
     if name not in COUNTER:
         # noqa: E501
-        return abort(status.HTTP_404_NOT_FOUND, f"Counter {name} does not exist")
+        return abort(status.HTTP_404_NOT_FOUND)
 
     counter = COUNTER[name]
     return jsonify(name=name, counter=counter)
@@ -93,7 +93,7 @@ def update_counters(name):
 
     if name not in COUNTER:
         # noqa: E501
-        return abort(status.HTTP_404_NOT_FOUND, f"Counter {name} does not exist")
+        return abort(status.HTTP_404_NOT_FOUND)
 
     COUNTER[name] += 1
 
